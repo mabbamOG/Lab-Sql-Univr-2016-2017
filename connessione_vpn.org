@@ -1,0 +1,39 @@
+#+TITLE: connessione vpn.univr.it
+* installare programmi utili
+- openconnect :: e' un client vpn con licenza lgpl che permette di
+  connettersi a ~juniper pulse~ in maniera piuttosto automatica
+- vpnc :: e' opzionale, ha lo scopo di impostare =resolv.conf= per avere un
+  redirezionamento del dns automatico. Per me non funziona ma dato che non
+  ho voglia di perdere tempo ho trovato un metodo equivalente, per voi
+  magari si.
+* effettuare la connessione vpn
+#+BEGIN_SRC fish
+~> sudo openconnect --juniper vpn.univr.it -u <il tuo id>
+#+END_SRC
+* verificare che il traffico passi per la vpn
+#+BEGIN_SRC fish
+~> ip route
+default dev tun0 scope link
+xxxxxx via yyyyyyy dev wlan0
+....
+ip_scuola dev tun0 scope link
+192.168.1.0/24 dev wlan0 proto kernel scope link src xxxxxx
+192.168.1.254 dev wlan0 scope link
+#+END_SRC
+bisogna avere =default dev tun0 scope link=, altrimenti:
+#+BEGIN_SRC fish
+~> ip route add default dev tun0 # alternativamente usare s/add/change nel caso (molto probabile) ci fosse gia' un redirezionamento per altre interfacce di rete
+#+END_SRC
+se tutto e' a posto questo funzionera':
+#+BEGIN_SRC fish
+~> ping dbserver.scienze.univr.it
+#+END_SRC
+altrimenti passare alla *risoluzione dns*
+* risoluzione dns
+  se il dns non viene redirezionato in maniera corretta, e' necessario chiedere ai server dns della scuola di fornire l'ip
+#+BEGIN_SRC fish
+~> set dbserver (host dbserver.scienze.univr.it 157.27.0.1) # 157.27.0.10 e' un altro dei server dns scolastici
+~> ping $dbserver
+#+END_SRC
+* PROFIT
+???

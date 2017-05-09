@@ -1,0 +1,73 @@
+                       ━━━━━━━━━━━━━━━━━━━━━━━━━━
+                        CONNESSIONE VPN.UNIVR.IT
+                       ━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+Table of Contents
+─────────────────
+
+1 installare programmi utili
+2 effettuare la connessione vpn
+3 verificare che il traffico passi per la vpn
+4 risoluzione dns
+5 PROFIT
+
+
+1 installare programmi utili
+════════════════════════════
+
+  openconnect: e' un client vpn con licenza lgpl che permette di
+               connettersi a `juniper pulse' in maniera piuttosto
+               automatica
+  vpnc: e' opzionale, ha lo scopo di impostare `resolv.conf' per avere un
+        redirezionamento del dns automatico. Per me non funziona ma dato
+        che non ho voglia di perdere tempo ho trovato un metodo
+        equivalente, per voi magari si.
+
+
+2 effettuare la connessione vpn
+═══════════════════════════════
+
+  ┌────
+  │ ~> sudo openconnect --juniper vpn.univr.it -u <il tuo id>
+  └────
+
+
+3 verificare che il traffico passi per la vpn
+═════════════════════════════════════════════
+
+  ┌────
+  │ ~> ip route
+  │ default dev tun0 scope link
+  │ xxxxxx via yyyyyyy dev wlan0
+  │ ....
+  │ ip_scuola dev tun0 scope link
+  │ 192.168.1.0/24 dev wlan0 proto kernel scope link src xxxxxx
+  │ 192.168.1.254 dev wlan0 scope link
+  └────
+  bisogna avere `default dev tun0 scope link', altrimenti:
+  ┌────
+  │ ~> ip route add default dev tun0 # alternativamente usare s/add/change nel caso (molto probabile) ci fosse gia' un redirezionamento per altre interfacce di rete
+  └────
+  se tutto e' a posto questo funzionera':
+  ┌────
+  │ ~> ping dbserver.scienze.univr.it
+  └────
+  altrimenti passare alla *risoluzione dns*
+
+
+4 risoluzione dns
+═════════════════
+
+  se il dns non viene redirezionato in maniera corretta, e' necessario
+  chiedere ai server dns della scuola di fornire l'ip
+  ┌────
+  │ ~> set dbserver (host dbserver.scienze.univr.it 157.27.0.1) # 157.27.0.10 e' un altro dei server dns scolastici
+  │ ~> ping $dbserver
+  └────
+
+
+5 PROFIT
+════════
+
+  ???

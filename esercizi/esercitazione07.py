@@ -1,5 +1,6 @@
 import psycopg2 as pg
 import json
+import getpass
 
 #def menu(choices):
 #    choice = ''
@@ -15,12 +16,13 @@ def visualizza(cur):
     for row in cur:
         print(' | '.join('%20s'%str(x) for x in row))
 
-with open('/tmp/config.json') as f:
-    config = json.loads(f.read())
-with pg.connect(**config) as conn:
-    with conn.cursor() as cur:
-        #query = 'insert into spese values (%s'
-        #query_params = ()
-        #cur.execute(query,query_params)
-        visualizza(cur)
+user = input('user: ')
+passw = getpass.getpass('pass: ')
+with pg.connect(database=user, user=user, password=passw, host='dbserver.scienze.univr.it') as conn:
+    with conn:
+        with conn.cursor() as cur:
+            #query = 'insert into spese values (%s'
+            #query_params = ()
+            #cur.execute(query,query_params)
+            visualizza(cur)
 print(':-)')
